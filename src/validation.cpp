@@ -4619,6 +4619,12 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidatio
         }
     }
 
+    // A block cannot reach back into the time range of the previous PoW
+    // algorithm (which would let it be mined with the old algorithm).
+    if (pindexPrev->GetBlockTime() >= consensusParams.HardforkTime && block.GetBlockTime() < consensusParams.HardforkTime) {
+        return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "pow-reversed", "cannot reverse PoW change");
+    }
+
     // Check timestamp against prev
     if (block.GetBlockTime() <= pindexPrev->GetMedianTimePast())
         return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "time-too-old", "block's timestamp is too early");
