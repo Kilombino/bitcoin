@@ -56,6 +56,14 @@ void ReadRegTestArgs(const ArgsManager& args, CChainParams::RegTestOptions& opti
     if (auto value = args.GetBoolArg("-fastprune")) options.fastprune = *value;
     if (HasTestOption(args, "bip94")) options.enforce_bip94 = true;
 
+    if (const auto arg{args.GetArg("-powchangetime", "")}; !arg.empty()) {
+        int64_t change_time;
+        if (!ParseInt64(arg, &change_time)) {
+            throw std::runtime_error(strprintf("Invalid time (%s) for -powchangetime=time.", arg));
+        }
+        options.pow_change_time = change_time;
+    }
+
     for (const std::string& arg : args.GetArgs("-testactivationheight")) {
         const auto found{arg.find('@')};
         if (found == std::string::npos) {

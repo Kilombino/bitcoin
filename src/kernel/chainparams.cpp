@@ -689,6 +689,13 @@ public:
         assert(consensus.hashGenesisBlock == uint256{"0f9188f13cb7b2c71f2a335e3a4fc328bf5beb436012afca590b1a11466e2206"});
         assert(genesis.hashMerkleRoot == uint256{"4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"});
 
+        if (opts.pow_change_time) {
+            if (*opts.pow_change_time <= genesis.GetBlockTime()) {
+                throw std::runtime_error("-powchangetime must be after the regtest genesis block time.");
+            }
+            consensus.HardforkTime = *opts.pow_change_time;
+        }
+
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
         vSeeds.clear();
         vSeeds.emplace_back("dummySeed.invalid.");

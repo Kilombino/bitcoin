@@ -177,6 +177,10 @@ public:
         std::unordered_map<Consensus::BuriedDeployment, int> activation_heights{};
         bool fastprune{false};
         bool enforce_bip94{false};
+        //! If set, schedule a proof-of-work algorithm change at this block time
+        //! (for exercising the PoW-change plumbing). pow_change_algo selects the
+        //! algorithm.
+        std::optional<int64_t> pow_change_time{};
     };
 
     static std::unique_ptr<const CChainParams> RegTest(const RegTestOptions& options);

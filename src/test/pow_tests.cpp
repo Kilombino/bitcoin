@@ -13,6 +13,20 @@
 
 BOOST_FIXTURE_TEST_SUITE(pow_tests, BasicTestingSetup)
 
+BOOST_AUTO_TEST_CASE(pow_change_args)
+{
+    ArgsManager args;
+    args.ForceSetArg("-powchangetime", "1296688603");
+    const auto chain_params{CreateChainParams(args, ChainType::REGTEST)};
+    BOOST_CHECK_EQUAL(chain_params->GetConsensus().HardforkTime, 1296688603);
+
+    for (const std::string arg : {"1296688603:extra", "1296688603:", "1296688602", "1"}) {
+        ArgsManager invalid_args;
+        invalid_args.ForceSetArg("-powchangetime", arg);
+        BOOST_CHECK_THROW(CreateChainParams(invalid_args, ChainType::REGTEST), std::runtime_error);
+    }
+}
+
 /* Test calculation of next difficulty target with no constraints applying */
 BOOST_AUTO_TEST_CASE(get_next_work)
 {
