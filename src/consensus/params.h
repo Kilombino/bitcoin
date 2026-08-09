@@ -139,6 +139,7 @@ struct Params {
 
     /** Hardfork parameters */
     int64_t HardforkTime{std::numeric_limits<int64_t>::max()};
+    uint8_t nPowChangeTargetShift{20};
 
     /**
      * If true, witness commitments contain a payload equal to a Bitcoin Script solution

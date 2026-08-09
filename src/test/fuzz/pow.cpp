@@ -121,5 +121,5 @@ FUZZ_TARGET(pow_transition, .init = initialize_pow)
     auto last_block{blocks.back().get()};
     const CBlockHeader dummy{last_block->GetBlockHeader()};
     unsigned int new_nbits{GetNextWorkRequired(last_block, &dummy, consensus_params)};
-    Assert(PermittedDifficultyTransition(consensus_params, last_block->nHeight + 1, last_block->nBits, new_nbits));
+    Assert(PermittedDifficultyTransition(consensus_params, last_block->nHeight + 1, last_block->nBits, new_nbits, last_block->nTime, last_block->nTime));
 }
