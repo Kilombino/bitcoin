@@ -53,6 +53,7 @@ int64_t UpdateTime(CBlockHeader* pblock, const Consensus::Params& consensusParam
     if (nOldTime < nNewTime) {
         pblock->nTime = nNewTime;
     }
+    pblock->m_header_v2 = pblock->GetBlockTime() >= consensusParams.HardforkTime;
 
     // Updating time can change work required on testnet:
     if (consensusParams.fPowAllowMinDifficultyBlocks) {

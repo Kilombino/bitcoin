@@ -4341,6 +4341,16 @@ void ChainstateManager::ReceivedBlockTransactions(const CBlock& block, CBlockInd
 
 static bool CheckBlockHeader(const CBlockHeader& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true)
 {
+    if (!block.m_header_v2) {
+        Assume(!block.m_nonce2);
+        Assume(!block.m_nonce3);
+        Assume(block.m_extranonce.IsNull());
+        Assume(!block.m_reserved1);
+        Assume(!block.m_reserved);
+        Assume(!block.m_xor_key_mask_clear_bits);
+        Assume(block.m_xor_key.IsNull());
+    }
+
     // Check proof of work matches claimed amount
     if (fCheckPOW && !CheckProofOfWork(block.GetHash(), block.nBits, consensusParams))
         return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "high-hash", "proof of work failed");
