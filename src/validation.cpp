@@ -4357,6 +4357,7 @@ static bool CheckBlockHeader(const CBlockHeader& block, BlockValidationState& st
         Assume(!block.m_reserved);
         Assume(!block.m_xor_key_mask_clear_bits);
         Assume(block.m_xor_key.IsNull());
+        Assume(!block.m_height);
     }
 
     // Check proof of work matches claimed amount
@@ -4696,6 +4697,12 @@ static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidatio
 static bool ContextualCheckBlockHeaderVolatile(const CBlockHeader& block, BlockValidationState& state, const ChainstateManager& chainman, const CBlockIndex* pindexPrev) EXCLUSIVE_LOCKS_REQUIRED(::cs_main)
 {
     const Consensus::Params& consensusParams = chainman.GetConsensus();
+
+    if (block.m_header_v2) {
+        if (block.m_height != pindexPrev->nHeight + 1) {
+            return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-header-height", "Height in block header does not match prevblock height+1");
+        }
+    }
 
     // Mandatory signaling for deployments approaching max_activation_height
     for (int i = 0; i < (int)Consensus::MAX_VERSION_BITS_DEPLOYMENTS; i++) {
