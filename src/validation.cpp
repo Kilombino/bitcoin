@@ -4341,7 +4341,15 @@ void ChainstateManager::ReceivedBlockTransactions(const CBlock& block, CBlockInd
 
 static bool CheckBlockHeader(const CBlockHeader& block, BlockValidationState& state, const Consensus::Params& consensusParams, bool fCheckPOW = true)
 {
-    if (!block.m_header_v2) {
+    if (block.m_header_v2) {
+        if (block.nTime < consensusParams.HardforkTime) {
+            return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-version-sha256d", strprintf("Blocks require SHA256d PoW until %s", consensusParams.HardforkTime));
+        }
+    } else {
+        if (block.nTime >= consensusParams.HardforkTime) {
+            return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-version-blake2b", "New blocks require BLAKE2b PoW");
+        }
+
         Assume(!block.m_nonce2);
         Assume(!block.m_nonce3);
         Assume(block.m_extranonce.IsNull());
